@@ -1,0 +1,230 @@
+﻿<Window x:Class="Bramki_Notify.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:local="clr-namespace:Bramki_Notify"
+        Title="Bramki - powiadomienia" Height="640" Width="1300"
+        WindowStartupLocation="CenterScreen"
+        ShowActivated="False"
+        Icon="/Assets/app.ico">
+
+    <Window.Resources>
+        <Style TargetType="TextBlock">
+            <Setter Property="TextWrapping" Value="Wrap"/>
+        </Style>
+
+        <local:RelativeTimeConverter x:Key="RelativeTimeConverter"/>
+
+        <!-- Card style -->
+        <Style x:Key="CardBorder" TargetType="Border">
+            <Setter Property="BorderBrush" Value="#DDD"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="CornerRadius" Value="8"/>
+            <Setter Property="Padding" Value="12"/>
+            <Setter Property="Margin" Value="0,0,0,10"/>
+            <Setter Property="Background" Value="White"/>
+        </Style>
+
+        <!-- Placeholder; replaced with an unfrozen instance in code-behind -->
+        <SolidColorBrush x:Key="AttentionPulseBrush" Color="White"/>
+    </Window.Resources>
+
+    <DockPanel Margin="16">
+        <!-- Status line -->
+        <Border DockPanel.Dock="Top"
+                Background="#F3F3F3"
+                CornerRadius="6"
+                Padding="10"
+                Margin="0,0,0,12">
+            <TextBlock Text="{Binding ConnectionStatus}"
+                       Foreground="#444"
+                       FontSize="14"/>
+        </Border>
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="16"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+
+            <!-- LEFT: regular log -->
+            <GroupBox Header="Prawidłowe przejścia" Grid.Column="0" Padding="12">
+                <ScrollViewer VerticalScrollBarVisibility="Auto">
+                    <Grid>
+                        <ItemsControl x:Name="RegularItems" ItemsSource="{Binding RegularEvents}">
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <Border Style="{StaticResource CardBorder}">
+                                        <Grid>
+                                            <Grid.RowDefinitions>
+                                                <RowDefinition Height="Auto"/>
+                                                <RowDefinition Height="Auto"/>
+                                            </Grid.RowDefinitions>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="*"/>
+                                                <ColumnDefinition Width="Auto"/>
+                                            </Grid.ColumnDefinitions>
+
+                                            <TextBlock Grid.Row="0" Grid.Column="0"
+                                                       FontSize="18" FontWeight="SemiBold"
+                                                       Text="{Binding Title}"/>
+
+                                            <TextBlock Grid.Row="0" Grid.Column="1" Foreground="#666">
+                                                <!-- Exact time on hover -->
+                                                <TextBlock.ToolTip>
+                                                    <ToolTip>
+                                                        <TextBlock Text="{Binding Timestamp, StringFormat={}{0:HH:mm:ss}}"/>
+                                                    </ToolTip>
+                                                </TextBlock.ToolTip>
+
+                                                <!-- Relative time text -->
+                                                <TextBlock.Text>
+                                                    <MultiBinding Converter="{StaticResource RelativeTimeConverter}">
+                                                        <Binding Path="Timestamp"/>
+                                                        <Binding Path="DataContext.Now"
+                                                                 RelativeSource="{RelativeSource AncestorType=Window}"/>
+                                                    </MultiBinding>
+                                                </TextBlock.Text>
+                                            </TextBlock>
+
+                                            <TextBlock Grid.Row="1" Grid.ColumnSpan="2"
+                                                       Margin="0,8,0,0"
+                                                       FontSize="22"
+                                                       Text="{Binding PersonLine}"/>
+                                        </Grid>
+                                    </Border>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+
+                        <!-- No data yet overlay -->
+                        <TextBlock Text="Brak danych — oczekiwanie na zdarzenia…"
+                                   Foreground="#777"
+                                   FontStyle="Italic"
+                                   FontSize="18"
+                                   HorizontalAlignment="Center"
+                                   VerticalAlignment="Center"
+                                   TextAlignment="Center"
+                                   Margin="24">
+                            <TextBlock.Style>
+                                <Style TargetType="TextBlock">
+                                    <Setter Property="Visibility" Value="Visible"/>
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding ElementName=RegularItems, Path=HasItems}" Value="True">
+                                            <Setter Property="Visibility" Value="Collapsed"/>
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </TextBlock.Style>
+                        </TextBlock>
+                    </Grid>
+                </ScrollViewer>
+            </GroupBox>
+
+            <!-- RIGHT: denied/problems -->
+            <GroupBox Header="Nieudane przejścia" Grid.Column="2" Padding="12">
+                <ScrollViewer VerticalScrollBarVisibility="Auto">
+                    <Grid>
+                        <ItemsControl x:Name="DeniedItems" ItemsSource="{Binding DeniedEvents}">
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <Border x:Name="DeniedBorder" Style="{StaticResource CardBorder}">
+                                        <Grid>
+                                            <Grid.RowDefinitions>
+                                                <RowDefinition Height="Auto"/>
+                                                <RowDefinition Height="Auto"/>
+                                                <RowDefinition Height="Auto"/>
+                                            </Grid.RowDefinitions>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="*"/>
+                                                <ColumnDefinition Width="Auto"/>
+                                            </Grid.ColumnDefinitions>
+
+                                            <TextBlock Grid.Row="0" Grid.Column="0"
+                                                       FontSize="18" FontWeight="SemiBold"
+                                                       Text="{Binding Title}"/>
+
+                                            <TextBlock Grid.Row="0" Grid.Column="1" Foreground="#666">
+                                                <!-- Exact time on hover -->
+                                                <TextBlock.ToolTip>
+                                                    <ToolTip>
+                                                        <TextBlock Text="{Binding Timestamp, StringFormat={}{0:HH:mm:ss}}"/>
+                                                    </ToolTip>
+                                                </TextBlock.ToolTip>
+
+                                                <!-- Relative time text -->
+                                                <TextBlock.Text>
+                                                    <MultiBinding Converter="{StaticResource RelativeTimeConverter}">
+                                                        <Binding Path="Timestamp"/>
+                                                        <Binding Path="DataContext.Now"
+                                                                 RelativeSource="{RelativeSource AncestorType=Window}"/>
+                                                    </MultiBinding>
+                                                </TextBlock.Text>
+                                            </TextBlock>
+
+                                            <TextBlock Grid.Row="1" Grid.ColumnSpan="2"
+                                                       Margin="0,8,0,0"
+                                                       FontSize="22"
+                                                       Text="{Binding PersonLine}"/>
+
+                                            <TextBlock Grid.Row="2" Grid.ColumnSpan="2"
+                                                       Margin="0,8,0,0"
+                                                       FontSize="18"
+                                                       Foreground="#B00020"
+                                                       Text="{Binding DeniedReason}"/>
+                                        </Grid>
+                                    </Border>
+
+                                    <DataTemplate.Triggers>
+                                        <DataTrigger Binding="{Binding IsAttention}" Value="True">
+                                            <!-- Synchronized breathing brush shared across all entries -->
+                                            <Setter TargetName="DeniedBorder"
+                                                    Property="Background"
+                                                    Value="{DynamicResource AttentionPulseBrush}"/>
+
+                                            <Setter TargetName="DeniedBorder"
+                                                    Property="BorderBrush"
+                                                    Value="#B00020"/>
+                                            <Setter TargetName="DeniedBorder"
+                                                    Property="BorderThickness"
+                                                    Value="2"/>
+                                        </DataTrigger>
+
+                                        <DataTrigger Binding="{Binding IsAttention}" Value="False">
+                                            <Setter TargetName="DeniedBorder"
+                                                    Property="BorderBrush"
+                                                    Value="#DDD"/>
+                                            <Setter TargetName="DeniedBorder"
+                                                    Property="BorderThickness"
+                                                    Value="1"/>
+                                        </DataTrigger>
+                                    </DataTemplate.Triggers>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+
+                        <!-- No data yet overlay -->
+                        <TextBlock Text="Brak danych — oczekiwanie na zdarzenia…"
+                                   Foreground="#777"
+                                   FontStyle="Italic"
+                                   FontSize="18"
+                                   HorizontalAlignment="Center"
+                                   VerticalAlignment="Center"
+                                   TextAlignment="Center"
+                                   Margin="24">
+                            <TextBlock.Style>
+                                <Style TargetType="TextBlock">
+                                    <Setter Property="Visibility" Value="Visible"/>
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding ElementName=DeniedItems, Path=HasItems}" Value="True">
+                                            <Setter Property="Visibility" Value="Collapsed"/>
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </TextBlock.Style>
+                        </TextBlock>
+                    </Grid>
+                </ScrollViewer>
+            </GroupBox>
+        </Grid>
+    </DockPanel>
+</Window>

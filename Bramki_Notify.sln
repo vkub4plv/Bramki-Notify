@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.14.36429.23 d17.14
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Bramki_Notify", "Bramki_Notify\Bramki_Notify.csproj", "{D9D62ACE-98B2-4B95-BD63-C3C67A3C2BEC}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{D9D62ACE-98B2-4B95-BD63-C3C67A3C2BEC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D9D62ACE-98B2-4B95-BD63-C3C67A3C2BEC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D9D62ACE-98B2-4B95-BD63-C3C67A3C2BEC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D9D62ACE-98B2-4B95-BD63-C3C67A3C2BEC}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {B64A4FBD-B56C-4F5B-8EDF-1624CCBDBFF0}
+	EndGlobalSection
+EndGlobal
